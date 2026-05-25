@@ -8,7 +8,7 @@ import timber.log.Timber
 
 class OutfitBaseApplication : Application() {
     val appContainer: AppContainer by lazy {
-        DefaultAppContainer()
+        DefaultAppContainer(this)
     }
 
     override fun onCreate() {
