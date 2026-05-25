@@ -1,0 +1,106 @@
+package com.outfitbase.ui.screens.product
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.outfitbase.domain.model.CartItem
+import com.outfitbase.domain.model.Product
+import com.outfitbase.domain.repository.CartRepository
+import com.outfitbase.domain.repository.ProductRepository
+import com.outfitbase.util.UiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
+class ProductDetailViewModel(
+    private val productId: Int,
+    private val productRepository: ProductRepository,
+    private val cartRepository: CartRepository
+) : ViewModel() {
+    private val _uiState = MutableStateFlow<UiState<Product>>(UiState.Loading)
+    val uiState: StateFlow<UiState<Product>> = _uiState.asStateFlow()
+
+    private val _quantity = MutableStateFlow(1)
+    val quantity: StateFlow<Int> = _quantity.asStateFlow()
+
+    private val _selectedSize = MutableStateFlow("")
+    val selectedSize: StateFlow<String> = _selectedSize.asStateFlow()
+
+    private val _selectedColor = MutableStateFlow("")
+    val selectedColor: StateFlow<String> = _selectedColor.asStateFlow()
+
+    private val _showAddedMessage = MutableStateFlow(false)
+    val showAddedMessage: StateFlow<Boolean> = _showAddedMessage.asStateFlow()
+
+    init {
+        loadProduct()
+    }
+
+    fun loadProduct() {
+        viewModelScope.launch {
+            _uiState.value = UiState.Loading
+            runCatching {
+                productRepository.getProduct(productId)
+            }.onSuccess { product ->
+                _selectedSize.value = product.sizes.firstOrNull().orEmpty()
+                _selectedColor.value = product.colors.firstOrNull().orEmpty()
+                _uiState.value = UiState.Success(product)
+            }.onFailure { throwable ->
+                _uiState.value = UiState.Error(throwable.message ?: "Product could not be loaded.")
+            }
+        }
+    }
+
+    fun selectSize(size: String) {
+        _selectedSize.value = size
+    }
+
+    fun selectColor(color: String) {
+        _selectedColor.value = color
+    }
+
+    fun increaseQuantity() {
+        _quantity.value += 1
+    }
+
+    fun decreaseQuantity() {
+        if (_quantity.value > 1) {
+            _quantity.value -= 1
+        }
+    }
+
+    fun addSelectedProductToCart(onProductAdded: () -> Unit) {
+        val product = (uiState.value as? UiState.Success)?.data ?: return
+
+        viewModelScope.launch {
+            cartRepository.addCartItem(product.toCartItem())
+            _showAddedMessage.value = true
+            onProductAdded()
+        }
+    }
+
+    private fun Product.toCartItem(): CartItem {
+        return CartItem(
+            productId = id,
+            name = name,
+            price = price,
+            imageUrl = imageUrl,
+            category = category,
+            quantity = quantity.value,
+            selectedSize = selectedSize.value,
+            selectedColor = selectedColor.value
+        )
+    }
+}
+
+class ProductDetailViewModelFactory(
+    private val productId: Int,
+    private val productRepository: ProductRepository,
+    private val cartRepository: CartRepository
+) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return ProductDetailViewModel(productId, productRepository, cartRepository) as T
+    }
+}

@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.outfitbase"
+    namespace = "com.outfitbase"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.outfitbase"
+        applicationId = "com.outfitbase"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
