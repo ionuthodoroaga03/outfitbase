@@ -15,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -60,6 +61,7 @@ private fun ProfileContent(
         item {
             Text(
                 text = text.title,
+                modifier = Modifier.testTag("profile_title"),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
@@ -73,7 +75,9 @@ private fun ProfileContent(
         item {
             Button(
                 onClick = onNavigateToSettings,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("profile_settings_button")
             ) {
                 Text(text.settings)
             }
