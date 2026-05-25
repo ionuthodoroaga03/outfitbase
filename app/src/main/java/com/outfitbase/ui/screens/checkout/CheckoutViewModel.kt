@@ -32,14 +32,14 @@ class CheckoutViewModel(
 
     fun updateCustomerName(customerName: String) {
         _uiState.value = _uiState.value.copy(
-            customerName = InputSanitizer.sanitizeStoredText(customerName),
+            customerName = customerName.take(120),
             errorMessage = null
         )
     }
 
     fun updateCustomerAddress(customerAddress: String) {
         _uiState.value = _uiState.value.copy(
-            customerAddress = InputSanitizer.sanitizeStoredText(customerAddress, 180),
+            customerAddress = customerAddress.take(180),
             errorMessage = null
         )
     }
@@ -52,7 +52,7 @@ class CheckoutViewModel(
     }
 
     fun placeOrder(onOrderConfirmed: () -> Unit) {
-        val state = uiState.value
+        val state = uiState.value.sanitizedForStorage()
         val validationError = state.validationError()
 
         if (validationError != null) {
@@ -90,6 +90,14 @@ class CheckoutViewModel(
             customerPhone.length < 7 -> "Phone number is invalid."
             else -> null
         }
+    }
+
+    private fun CheckoutUiState.sanitizedForStorage(): CheckoutUiState {
+        return copy(
+            customerName = InputSanitizer.sanitizeStoredText(customerName),
+            customerAddress = InputSanitizer.sanitizeStoredText(customerAddress, 180),
+            customerPhone = InputSanitizer.sanitizePhone(customerPhone)
+        )
     }
 
     private fun CheckoutUiState.toOrder(): Order {
