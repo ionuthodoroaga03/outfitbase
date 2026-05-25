@@ -1,4 +1,4 @@
-package com.example.outfitbase.data.product
+package com.example.outfitbase.data.local.product
 
 object ProductMetadataCatalog {
     private val fallbackMetadata = ProductMetadata(

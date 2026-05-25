@@ -1,6 +1,6 @@
 package com.example.outfitbase.data.mapper
 
-import com.example.outfitbase.data.product.ProductMetadataCatalog
+import com.example.outfitbase.data.local.product.ProductMetadataCatalog
 import com.example.outfitbase.data.remote.dto.ProductDto
 import com.example.outfitbase.domain.model.Product
 
