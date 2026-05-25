@@ -84,7 +84,10 @@ fun OutfitBaseNavHost(
                     productId = productId,
                     onNavigateBack = navController::popBackStack,
                     onAddToCart = {
-                        navController.navigate(Route.Cart.path)
+                        navController.navigate(Route.Cart.path) {
+                            popUpTo(Route.Home.path)
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
@@ -92,7 +95,11 @@ fun OutfitBaseNavHost(
         composable(Route.Checkout.path) {
             CheckoutScreen(
                 onOrderConfirmed = {
-                    navController.navigate(Route.OrderConfirmation.path)
+                    navController.navigate(Route.OrderConfirmation.path) {
+                        popUpTo(Route.Cart.path) {
+                            inclusive = true
+                        }
+                    }
                 },
                 onNavigateBack = navController::popBackStack
             )

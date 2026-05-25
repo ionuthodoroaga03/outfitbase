@@ -3,7 +3,9 @@ package com.example.outfitbase.ui.screens.product
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.outfitbase.domain.model.CartItem
 import com.example.outfitbase.domain.model.Product
+import com.example.outfitbase.domain.repository.CartRepository
 import com.example.outfitbase.domain.repository.ProductRepository
 import com.example.outfitbase.util.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +15,8 @@ import kotlinx.coroutines.launch
 
 class ProductDetailViewModel(
     private val productId: Int,
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val cartRepository: CartRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<Product>>(UiState.Loading)
     val uiState: StateFlow<UiState<Product>> = _uiState.asStateFlow()
@@ -67,17 +70,37 @@ class ProductDetailViewModel(
         }
     }
 
-    fun markProductAdded() {
-        _showAddedMessage.value = true
+    fun addSelectedProductToCart(onProductAdded: () -> Unit) {
+        val product = (uiState.value as? UiState.Success)?.data ?: return
+
+        viewModelScope.launch {
+            cartRepository.addCartItem(product.toCartItem())
+            _showAddedMessage.value = true
+            onProductAdded()
+        }
+    }
+
+    private fun Product.toCartItem(): CartItem {
+        return CartItem(
+            productId = id,
+            name = name,
+            price = price,
+            imageUrl = imageUrl,
+            category = category,
+            quantity = quantity.value,
+            selectedSize = selectedSize.value,
+            selectedColor = selectedColor.value
+        )
     }
 }
 
 class ProductDetailViewModelFactory(
     private val productId: Int,
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val cartRepository: CartRepository
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ProductDetailViewModel(productId, productRepository) as T
+        return ProductDetailViewModel(productId, productRepository, cartRepository) as T
     }
 }

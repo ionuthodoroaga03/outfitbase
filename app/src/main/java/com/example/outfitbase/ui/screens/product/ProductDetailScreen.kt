@@ -43,7 +43,8 @@ fun ProductDetailScreen(
         key = productId.toString(),
         factory = ProductDetailViewModelFactory(
             productId = productId,
-            productRepository = application.appContainer.productRepository
+            productRepository = application.appContainer.productRepository,
+            cartRepository = application.appContainer.cartRepository
         )
     )
     val uiState by viewModel.uiState.collectAsState()
@@ -71,8 +72,7 @@ fun ProductDetailScreen(
             onIncreaseQuantity = viewModel::increaseQuantity,
             onDecreaseQuantity = viewModel::decreaseQuantity,
             onAddToCart = {
-                viewModel.markProductAdded()
-                onAddToCart()
+                viewModel.addSelectedProductToCart(onAddToCart)
             }
         )
     }
