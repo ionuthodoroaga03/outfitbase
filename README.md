@@ -47,8 +47,8 @@ April 24, 2026
 
 ### 👤 Profil & Setări
 
-- Autentificare cu email și parolă (posibil prin Google Auth)
-- Ecran de setări: temă, limbă
+- Ecran de profil cu date utilizator și istoric comenzi
+- Ecran de setări: temă (light/dark/system), limbă (română/engleză)
 
 ### 🛒 Coș & Comenzi
 
@@ -66,7 +66,7 @@ April 24, 2026
 
 Fluxul de date prin straturile aplicației:
 
-- **Jetpack Compose** (UI layer) ↔ **ViewModel** (State + events) prin `Flow / LiveData` și `UiState`
+- **Jetpack Compose** (UI layer) ↔ **ViewModel** (State + events) prin `StateFlow` și `UiState`
 - **ViewModel** → **Repository** (Data abstraction layer)
 - **Repository** → **Room DB** (Local persistence) și **Retrofit** (Remote API)
 
@@ -76,17 +76,16 @@ Fluxul de date prin straturile aplicației:
 
 Ecranele principale și componentele Compose folosite:
 
-- **Splash art / Login screen** — `Box, Button`
-- **Home screen / Browse products** — `LazyVerticalGrid, Card`
-- **Search** — `SearchBar, LazyColumn`
-- **Product details** — `LazyColumn, Button`
-- **Cart** — `LazyColumn, Button`
-- **Checkout screen** — `LazyColumn, Button`
-- **Order confirmation** — `Column, Text`
-- **Profile screen** — `Column, Text`
-- **Settings screen** — `LazyColumn, Switch`
+- **Home screen / Browse products** — `LazyVerticalGrid, Card, DropdownMenu`
+- **Search** — `OutlinedTextField, LazyColumn, Card, DropdownMenu`
+- **Product details** — `LazyColumn, Button, AsyncImage`
+- **Cart** — `LazyColumn, Card, OutlinedButton`
+- **Checkout screen** — `LazyColumn, OutlinedTextField, Button`
+- **Order confirmation** — `Column, Button, Text`
+- **Profile screen** — `LazyColumn, Card, Button`
+- **Settings screen** — `Column, RadioButton, TextButton`
 - **Bottom navigation bar** (persistent on all screens) — `NavigationBar, NavigationBarItem`
-  - Home (`LazyVerticalGrid`), Search (`SearchBar`), Cart (`LazyColumn`), Profile (`Column`)
+  - Home (`LazyVerticalGrid`), Search (`OutlinedTextField`), Cart (`LazyColumn`), Profile (`LazyColumn`)
 
 ---
 
