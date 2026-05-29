@@ -8,7 +8,7 @@ University Politehnica of Bucharest
 
 *Tehnici Avansate pentru Dezvoltarea Aplicațiilor Mobile*
 
-April 24, 2026
+29 Mai, 2026
 
 ---
 
