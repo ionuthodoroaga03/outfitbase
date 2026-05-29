@@ -2,7 +2,7 @@
 
 ## Magazin Online de Haine
 
-**Ionuț Hodoroagă**
+**Ionuț Hodoroagă**, grupa IA1-A
 
 University Politehnica of Bucharest
 
